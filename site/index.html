@@ -3,14 +3,90 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>S3 + CloudFront 静的サイト</title>
+  <meta name="description" content="北海道の架空のラーメン店を題材にした、S3とCloudFrontの静的サイトサンプルです。">
+  <meta name="robots" content="noindex, nofollow">
+  <title>北の麺処 雪灯り｜北海道ラーメン</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <h1>S3 + CloudFront 静的サイト</h1>
-    <p>非公開のS3バケットをCloudFrontのOrigin Access Controlから参照する構成例です。</p>
-    <p>このページには個人情報や認証情報を掲載しないでください。</p>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="北の麺処 雪灯り トップへ">
+        <span class="brand-mark" aria-hidden="true">雪</span>
+        <span>北の麺処 <strong>雪灯り</strong></span>
+      </a>
+      <nav aria-label="ページ内ナビゲーション">
+        <a href="#about">こだわり</a>
+        <a href="#menu">お品書き</a>
+        <a href="#information">店舗案内</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero-image" src="images/hokkaido-miso-ramen.png" alt="湯気の立つ、チャーシューとコーン、バターをのせた味噌ラーメン" fetchpriority="high">
+      <div class="hero-content">
+        <p class="eyebrow">北海道の一杯を、あたたかく。</p>
+        <h1 id="hero-title">湯気の向こうに、<br>北のごちそう。</h1>
+        <p class="hero-copy">香ばしい味噌のコクと、もちっとしたちぢれ麺。<br>冷えた体にしみわたる一杯を。</p>
+        <a class="button" href="#menu">お品書きを見る <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="hero-caption">写真は生成したサンプル画像です</p>
+    </section>
+
+    <section class="intro section-shell" id="about" aria-labelledby="about-title">
+      <div class="section-heading">
+        <p class="eyebrow">OUR RAMEN</p>
+        <h2 id="about-title">一杯に、北海道のぬくもりを。</h2>
+      </div>
+      <p>味噌の豊かな香り、黄色いちぢれ麺、甘みのあるコーン。北海道らしい味わいをイメージした、架空のラーメン店のサイトサンプルです。</p>
+    </section>
+
+    <section class="menu-section" id="menu" aria-labelledby="menu-title">
+      <div class="section-shell">
+        <div class="section-heading centered">
+          <p class="eyebrow">MENU</p>
+          <h2 id="menu-title">お品書き</h2>
+          <p>ほっとする一杯を、気分に合わせて。</p>
+        </div>
+        <div class="menu-grid">
+          <article class="menu-item featured">
+            <span class="menu-label">おすすめ</span>
+            <h3>雪灯り 味噌らーめん</h3>
+            <p>コクのある味噌スープに、バターとコーンのやさしい甘み。</p>
+            <p class="price">¥1,080 <span>税込・サンプル価格</span></p>
+          </article>
+          <article class="menu-item">
+            <span class="menu-label">すっきり</span>
+            <h3>北の塩らーめん</h3>
+            <p>澄んだスープの旨みを、最後のひと口まで。</p>
+            <p class="price">¥980 <span>税込・サンプル価格</span></p>
+          </article>
+          <article class="menu-item">
+            <span class="menu-label">定番</span>
+            <h3>香ばし醤油らーめん</h3>
+            <p>醤油の香りが引き立つ、どこか懐かしい味わい。</p>
+            <p class="price">¥980 <span>税込・サンプル価格</span></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="information section-shell" id="information" aria-labelledby="information-title">
+      <div class="section-heading">
+        <p class="eyebrow">INFORMATION</p>
+        <h2 id="information-title">店舗案内</h2>
+      </div>
+      <p>「北の麺処 雪灯り」は静的ウェブサイト構築のための架空の店舗です。実在の店舗・所在地・営業時間ではありません。</p>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="section-shell footer-inner">
+      <span>北の麺処 雪灯り</span>
+      <small>CloudFormation・S3・CloudFront のデモサイト</small>
+    </div>
+  </footer>
 </body>
 </html>

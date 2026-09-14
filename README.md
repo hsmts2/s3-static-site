@@ -1,10 +1,8 @@
 # S3 + CloudFront 静的ウェブサイト（CloudFormation）
 
-非公開のAmazon S3バケットをオリジンにし、Amazon CloudFrontからHTTPSで静的ファイルを配信する構成例です。CloudFormationで基盤を作成し、HTML・CSSは別手順で配置します。
+非公開のAmazon S3バケットをオリジンにし、Amazon CloudFrontからHTTPSで静的ファイルを配信する構成例です。CloudFormationで基盤を作成し、HTML・CSS・画像は別手順で配置します。`site/`には架空の北海道ラーメン店のサンプルページを用意しています。
 
 ![非公開S3とCloudFront OACの構成図](docs/architecture.png)
-
-編集可能な構成図：[PowerPoint](docs/architecture.pptx)／[SVG](docs/architecture.svg)
 
 ## 構成と公開範囲
 
@@ -43,21 +41,47 @@ CloudFrontの標準ドメイン（`*.cloudfront.net`）を使用し、独自ド�
 
 ### AWS CLI
 
-PowerShellの例です。`<REGION>`にはCloudFormationとS3バケットを作成するリージョンを指定します。CloudFront自体はグローバルなサービスです。
+PowerShellの例です。`$region`にはCloudFormationとS3バケットを作成するリージョンを指定します。CloudFront自体はグローバルなサービスです。
 
 ```powershell
+$region = 'ap-northeast-1'
 aws sts get-caller-identity
-aws cloudformation validate-template --template-body file://templates/secure-site.yaml --region <REGION>
-aws cloudformation deploy --template-file templates/secure-site.yaml --stack-name s3-static-site-lab --parameter-overrides ProjectName=s3-static-site-lab --region <REGION>
+aws cloudformation validate-template --template-body file://templates/secure-site.yaml --region $region
+aws cloudformation deploy --template-file templates/secure-site.yaml --stack-name s3-static-site-lab --parameter-overrides ProjectName=s3-static-site-lab --region $region
 ```
 
-スタックが`CREATE_COMPLETE`となったら、Outputsから`BucketName`、`DistributionId`、`SiteUrl`を取得します。`BucketName`を実際の出力値へ置き換えて、公開専用のファイルだけをアップロードします。初回は`--delete`を付けません。
+## サイトファイルの配置・公開確認
+
+CloudFormationは**空の非公開S3バケットとCloudFrontなどの配信基盤**を作成します。HTML・CSS・画像のアップロードは別途必要です。スタックが`CREATE_COMPLETE`となったら、CloudFormationの「出力」（Outputs）から`BucketName`、`DistributionId`、`SiteUrl`を確認します。
+
+アップロード先は`BucketName`に表示されたS3バケットの**直下**です。`site`というフォルダーをバケット内に作らず、`site/`の**中身**を次のように配置します。
+
+| ローカルのファイル | S3上の配置先 |
+| --- | --- |
+| `site/index.html` | `s3://バケット名/index.html` |
+| `site/error.html` | `s3://バケット名/error.html` |
+| `site/styles.css` | `s3://バケット名/styles.css` |
+| `site/images/hokkaido-miso-ramen.png` | `s3://バケット名/images/hokkaido-miso-ramen.png` |
+
+### S3コンソールでアップロード
+
+1. S3コンソールで`BucketName`と同じ名前のバケットを開く。
+2. 「アップロード」から`site/`内の`index.html`、`error.html`、`styles.css`と`images/`フォルダーを追加する。アップロード先に`site/`が付いていないことを確認する。
+3. アップロード後、バケットの「オブジェクト」一覧で上表と同じキーになっていることを確認する。
+
+### AWS CLIでアップロード
+
+PowerShellで`$bucketName`をOutputsの実際の`BucketName`へ置き換えて実行します。リポジトリのルートディレクトリから実行し、初回は`--delete`を付けません。
 
 ```powershell
-aws s3 sync site/ s3://<BUCKET_NAME>/ --region <REGION>
+$region = 'ap-northeast-1'
+$bucketName = 'Outputsに表示された実際のBucketName'
+aws s3 sync .\site\ "s3://$bucketName/" --region $region
 ```
 
-CloudFrontの反映後に`SiteUrl`へアクセスします。`index.html`が表示され、存在しないパスでは`error.html`とHTTP 404が返ることを確認します。更新直後に旧内容が残る場合は、キャッシュのTTL経過を待つか、対象DistributionでInvalidationを実行します。
+CloudFrontの反映後に`SiteUrl`へアクセスします。トップページにラーメン店のサンプルサイトと画像が表示され、存在しないパスでは`error.html`とHTTP 404が返ることを確認します。CloudFrontのURLの`/`はバケット直下の`index.html`へ対応します。更新直後に旧内容が残る場合は、キャッシュのTTL経過を待つか、対象DistributionでInvalidationを実行します。
+
+サンプルの店舗名、メニュー、価格、画像はデモ用です。実在店舗の情報ではありません。写真は画像生成ツールで制作しました。
 
 ## セキュリティ確認
 
@@ -69,9 +93,3 @@ CloudFrontの反映後に`SiteUrl`へアクセスします。`index.html`が表�
 ## 後片付け
 
 S3バケットには`DeletionPolicy: Retain`を設定しています。スタック削除後もバケットとアップロードしたファイルは残るため、対象バケット名・中身・料金を確認してください。削除する場合は、**このスタックが作成したバケットであることを再確認**してから、ファイルを空にし、残ったバケットを削除します。別用途のバケットを対象にしないでください。
-
-## 公式資料
-
-- [AWSアーキテクチャアイコン](https://aws.amazon.com/jp/architecture/icons/)：構成図のUser、AWS Cloud、CloudFormation、CloudFront、S3アイコンに、ユーザー提供の`AWS-Architecture-Icons-Deck_For-Light-BG_01302026.pptx`を使用
-- [CloudFrontからS3へのアクセスをOACで制限する](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
-- [CloudFormationのS3バケット](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html)
