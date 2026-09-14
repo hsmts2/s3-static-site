@@ -31,7 +31,17 @@ CloudFrontの標準ドメイン（`*.cloudfront.net`）を使用し、独自ド�
 - 配置する`site/`に個人情報、認証情報、顧客情報を含めないこと
 - S3、CloudFront、データ転送などの料金が発生し得ることを理解していること
 
-## デプロイ
+## スタック作成
+
+### CloudFormationコンソール
+
+1. 対象リージョンを選び、CloudFormationの「スタックの作成」から新しいリソースを使用する。
+2. 既存のテンプレートとして`templates/secure-site.yaml`をアップロードする。
+3. スタック名を入力する（例：`s3-static-site-lab`）。
+4. パラメータ`ProjectName`を確認する。初期値は`aws-s3-static-site-cfn`。同じアカウント・リージョンで複数作成する場合は、リソース名の重複を避けるため別の値にする。
+5. 設定内容を確認してスタックを作成し、`CREATE_COMPLETE`まで待つ。このテンプレートにはIAMリソースがないため、IAM作成のCapabilities承認は不要。
+
+### AWS CLI
 
 PowerShellの例です。`<REGION>`にはCloudFormationとS3バケットを作成するリージョンを指定します。CloudFront自体はグローバルなサービスです。
 
@@ -62,6 +72,6 @@ S3バケットには`DeletionPolicy: Retain`を設定しています。スタッ
 
 ## 公式資料
 
-- [AWSアーキテクチャアイコン](https://aws.amazon.com/jp/architecture/icons/)：構成図のAWS Cloud、CloudFormation、CloudFront、S3アイコンに、ユーザー提供の`AWS-Architecture-Icons-Deck_For-Light-BG_01302026.pptx`を使用
+- [AWSアーキテクチャアイコン](https://aws.amazon.com/jp/architecture/icons/)：構成図のUser、AWS Cloud、CloudFormation、CloudFront、S3アイコンに、ユーザー提供の`AWS-Architecture-Icons-Deck_For-Light-BG_01302026.pptx`を使用
 - [CloudFrontからS3へのアクセスをOACで制限する](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
 - [CloudFormationのS3バケット](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html)
