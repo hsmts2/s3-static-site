@@ -55,7 +55,6 @@ h1 { margin: 0; font-size: clamp(2.4rem, 5.5vw, 4.6rem); line-height: 1.35; lett
 .information > p { margin-top: 1.5rem; }
 .site-footer { background: #29231d; color: #f9f1e6; }
 .footer-inner { min-height: 100px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.site-footer small { color: #c9bbab; }
 
 .error-page { min-height: 100vh; display: grid; place-items: center; padding: 2rem; }
 .error-card { width: min(100%, 36rem); padding: 3rem; border: 1px solid #e5dac8; background: #fff; }
